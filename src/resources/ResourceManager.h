@@ -9,6 +9,8 @@
 namespace Renderer
 {
 	class ShaderProgram;
+	class Texture2d;
+
 }
 
 
@@ -31,6 +33,14 @@ public:
 	 
 	std::shared_ptr<Renderer::ShaderProgram> getShader(const std::string& shaderName) const;
 
+	//load texture
+	std::shared_ptr<Renderer::Texture2d> loadTexture(const std::string& textureName, const std::string& texturePath);
+
+	
+	std::shared_ptr<Renderer::Texture2d> getTexture(const std::string& textureName) const;
+
+
+
 
 private:
 
@@ -38,6 +48,15 @@ private:
 	ShaderProgramsMap m_shaderPrograms;
 	std::string m_executablePath;
 	std::string getFileString(const std::string& relativePath) const;
+
+	typedef std::map<std::string, std::shared_ptr<Renderer::Texture2d>> TexturesMap;
+	TexturesMap m_textures;
+
+
+
+
+
+
 
 
 };

@@ -4,40 +4,48 @@
 #include <iostream>
 #include "renderer/shaderProgram.h"
 #include "resources/resourceManager.h"
+#include "renderer/Texture2d.h"
+
 
 
 
 
 //массив вертексов треугольника
 GLfloat point[] = {
-    -0.5f, -0.5f, 0.0f, // нижний левый угол
-     0.5f, -0.5f, 0.0f, // нижний правый угол
-     0.0f,  0.5f, 0.0f  // верхний угол
+     -0.5f, -0.5f, 0.0f, // нижний левый угол
+      0.5f, -0.5f, 0.0f, // нижний правый угол
+      0.0f,  0.5f, 0.0f  // верхний угол
 };
 GLfloat colors[] = {
     1.0f, 0.0f, 0.0f, // красный
     0.0f, 1.0f, 0.0f, // зеленый
     0.0f, 0.0f, 1.0f  // синий
 };
+GLfloat texcord[] = {
+	0.0f, 0.0f,
+	1.0f, 0.0f,
+	0.5f, 1.0f 
+};
 
-const char* vertexShader = 
-"#version 460 core\n"
-"layout(location = 0 ) in vec3 vertex_position;"
-"layout(location = 1 ) in vec3 vertex_color;"
-"out vec3 color;"
-"void main(){"
-"   color = vertex_color;"
-"   gl_Position = vec4(vertex_position,1.0);"
-"}";
 
-const char* fragmentShader =    
-"#version 460 core\n"
-"in vec3 color;"
-"out vec4 frag_color;"
-"void main(){"
-"   frag_color = vec4(color,1.0);"
-"}";
-
+//const char* vertexShader = 
+//"#version 460 core\n"
+//"layout(location = 0 ) in vec3 vertex_position;"
+//"layout(location = 1 ) in vec3 vertex_color;"
+//"out vec3 color;"
+//"void main(){"
+//"   color = vertex_color;"
+//"   gl_Position = vec4(vertex_position,1.0);"
+//"}";
+//
+//const char* fragmentShader =    
+//"#version 460 core\n"
+//"in vec3 color;"
+//"out vec4 frag_color;"
+//"void main(){"
+//"   frag_color = vec4(color,1.0);"
+//"}";
+//
 
 
 
@@ -126,6 +134,8 @@ int main(int argc, char** argv)
 			return -1;
 		}
 
+		auto tex = resourceManager.loadTexture("defaulttextur", "res/textures/map_16x16.png");
+
 
 	GLuint points_vbo = 0;
 	glGenBuffers(1, &points_vbo);
@@ -137,6 +147,12 @@ int main(int argc, char** argv)
 	glGenBuffers(1, &colors_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+
+	GLuint texcord_vbo = 0;
+	glGenBuffers(1, &texcord_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, texcord_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(texcord), texcord, GL_STATIC_DRAW);
+
 
 	GLuint vao = 0;
 	glGenVertexArrays(1, &vao);
@@ -150,10 +166,14 @@ int main(int argc, char** argv)
 	glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
+	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, texcord_vbo);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
 
 
-
+	pDefaultShaderProgram->use();//установка шейдерной программы
+	pDefaultShaderProgram->setInt("tex", 0);
 
 
 
@@ -168,6 +188,8 @@ int main(int argc, char** argv)
 		pDefaultShaderProgram->use();//установка шейдерной программы
 
 		glBindVertexArray(vao);
+		tex->bind();
+
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 

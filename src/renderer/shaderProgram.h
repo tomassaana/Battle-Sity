@@ -23,8 +23,8 @@ namespace Renderer
 		~ShaderProgram();
 		bool isCompiled() const { return m_iscompiled; }
 		void use() const;	
-
-
+		void setInt(const std::string& name, const int value) const;
+		
 	private:
 		bool createShader(const std::string& source, const GLenum shaderType, GLuint& shaderID);
 		bool m_iscompiled = false;

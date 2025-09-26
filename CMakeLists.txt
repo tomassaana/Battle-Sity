@@ -9,8 +9,11 @@ project(Battle-Sity)
 add_executable(Battle-Sity src/main.cpp
 	src/renderer/shaderProgram.h
 	src/renderer/shaderProgram.cpp
+	src/renderer/Texture2d.h
+	src/renderer/Texture2d.cpp
 	src/resources/ResourceManager.h
 	src/resources/ResourceManager.cpp 
+	src/resources/stb_image.h
 )
 
 
