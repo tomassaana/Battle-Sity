@@ -6,16 +6,16 @@ namespace Renderer
 {
 
 
-	Renderer::Texture2d::Texture2d(const GLuint width, const GLuint height,
+	Texture2d::Texture2d(const GLuint width, const GLuint height,
 					const unsigned char* data,
 					const unsigned int channels,
 					const GLenum filter,
 					const GLenum wrapmode) 
-		:m_width(width), m_height(height)
+										:m_width(width),
+										 m_height(height)
 
 	{
-		//glGenTextures(1, (GLuint*)&m_ID);
-		//glTexImage2D(GL_TEXTURE_2D, 0, (channels == 4) ? GL_RGBA : GL_RGB, width, height, 0, (channels == 4) ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);  
+
 		switch (channels)
 		{
 		case 1:
@@ -35,8 +35,8 @@ namespace Renderer
 			break;
 		}
 		
-		
 		glGenTextures(1, (GLuint*)&m_ID);
+		//glGenTextures(1, &m_ID);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_ID);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, m_mode, GL_UNSIGNED_BYTE, data);
@@ -85,11 +85,43 @@ namespace Renderer
 		glDeleteTextures(1, (GLuint*)&m_ID);
 	}
 
-	void Renderer::Texture2d::bind() const
+	void Texture2d::addSubTexture(std::string& name, const glm::vec2& leftBottomUV, const glm::vec2& righttTopUV)
 	{
+		m_subTextures.emplace(std::move(name), SubTexture2d(leftBottomUV, righttTopUV));
+	}
+
+	const Texture2d::SubTexture2d& Texture2d::getSubTexture(const std::string& name) const
+	{
+		auto it = m_subTextures.find(name);
+		if (it != m_subTextures.end())
+		{
+			return it->second;
+		}
+		else {
+			//std::cout << "Error get SubTexture: not found SubTexture with name:" << name << std::endl;
+			static SubTexture2d defaultSubTexture;
+			return defaultSubTexture;
+		}
+		const static SubTexture2d defaultSubTexture;
+		return defaultSubTexture;
+
+
+	}
+
+	
+
+	void Texture2d::bind() const
+	{
+
+	
 		glBindTexture(GL_TEXTURE_2D, m_ID);
 	}
 
+	/*void Texture2d::bind() const
+	{
+		glBindTexture(GL_TEXTURE_2D, m_ID);
+	}
+*/
 
 
 

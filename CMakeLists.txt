@@ -7,10 +7,12 @@ project(Battle-Sity)
 
 
 add_executable(Battle-Sity src/main.cpp
-	src/renderer/shaderProgram.h
 	src/renderer/shaderProgram.cpp
+	src/renderer/shaderProgram.h
 	src/renderer/Texture2d.h
 	src/renderer/Texture2d.cpp
+	src/renderer/Sprite.cpp
+	src/renderer/Sprite.h
 	src/resources/ResourceManager.h
 	src/resources/ResourceManager.cpp 
 	src/resources/stb_image.h
@@ -24,14 +26,17 @@ target_compile_features(Battle-Sity PUBLIC cxx_std_17)
 
 
 
-
+# - загружает и билдит cmake file
 add_subdirectory(external/glfw)
 target_link_libraries(Battle-Sity glfw)
 
 find_package(OpenGL REQUIRED)
-
 target_link_libraries(Battle-Sity OpenGL::GL)
 
+# - загружает  file математики
+include_directories(external/glm)
+
+# - загружает и билдит cmake file
 add_subdirectory(external/glad)
 target_link_libraries(Battle-Sity Glad)
 

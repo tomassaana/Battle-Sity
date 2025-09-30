@@ -2,6 +2,8 @@
 #include <string>
 #include <glad/glad.h>
 #include <iostream>
+#include <mat4x4.hpp>	
+
 
 
 namespace Renderer
@@ -16,7 +18,9 @@ namespace Renderer
 		ShaderProgram& operator=(const ShaderProgram&) = delete;
 		ShaderProgram& operator=(ShaderProgram&& SP)  noexcept;
 		ShaderProgram(ShaderProgram&& SP)  noexcept;
-		
+
+		void SetMatrix4(const std::string& name, const glm::mat4& matrix ) const;
+
 
 
 
@@ -33,12 +37,4 @@ namespace Renderer
 
 
 
-
-	
-	
-
-
-
-
-
-}//ShaderProgam
+}

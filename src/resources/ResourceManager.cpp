@@ -1,6 +1,7 @@
 #include "ResourceManager.h"
 #include "../Renderer/shaderProgram.h"
 #include "../Renderer/Texture2d.h"
+#include "../Renderer/Sprite.h"	
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -24,7 +25,8 @@ ResourceManager::ResourceManager(const std::string& executablepath)
 
 }
 
-std::string ResourceManager::getFileString(const std::string& relativePath) const 
+
+std::string ResourceManager::getFileString(const std::string& relativePath) const
 {
 	std::ifstream file;
 	file.open(m_executablePath + "/" +  relativePath.c_str(), std::ios::in | std::ios::binary);
@@ -95,10 +97,8 @@ std::shared_ptr<Renderer::Texture2d> ResourceManager::loadTexture(const std::str
 	if (!pixels) {
 		std::cout << "Error load texture: " << texturePath << std::endl;
 		return nullptr;
-	}	
+	}
 
-//	std::shared_ptr<Renderer::Texture2d>& newtexture = 
-//		m_textures.emplace(textureName, std::make_shared<Renderer::Texture2d>(width, height, pixels, channels)).first->second;
 	std::shared_ptr<Renderer::Texture2d> newtexture2d = 
 		m_textures.emplace(textureName, std::make_shared<Renderer::Texture2d>
 				(width, height, pixels, channels, GL_NEAREST, GL_CLAMP_TO_EDGE)).first->second;
@@ -125,4 +125,47 @@ std::shared_ptr<Renderer::Texture2d> ResourceManager::getTexture(const std::stri
 
 
 	//return std::shared_ptr<Renderer::Texture2d>();
+}
+
+std::shared_ptr<Renderer::Sprite> ResourceManager::loadSprite(const std::string& spriteName,
+																const std::string& textureName,
+																const std::string& shaderName,
+																const unsigned int spriteWidth,
+																const unsigned int spriteHight) 
+{
+	auto pTexture = getTexture(textureName);
+	if(!pTexture)
+	{
+		std::cout << "Error load Sprite: not found texture with name:" << textureName << std::endl;
+		return nullptr;
+	}
+
+	auto pShader = getShader(shaderName);
+	if (!pShader)
+	{
+		std::cout << "Error load Shader: not found Shader with name:" << shaderName << std::endl;
+		return nullptr;
+	}
+
+	std::shared_ptr<Renderer::Sprite> newSprite = m_sprites.emplace(spriteName,
+																		std::make_shared<Renderer::Sprite>(	pTexture,
+																		pShader,
+																		glm::vec2(0.f, 0.f),
+																		glm::vec2(spriteWidth, spriteHight)	)).first->second;
+
+	return newSprite;
+}
+
+std::shared_ptr<Renderer::Sprite> ResourceManager::getSprite(const std::string& spriteName) const
+{
+	SpritesMap::const_iterator it = m_sprites.find(spriteName);
+	if (it != m_sprites.end())
+	{
+		return it->second;
+	}
+	else {
+		std::cout << "Error get Sprite: not found Sprite with name:" << spriteName << std::endl;
+		return nullptr;
+	}
+
 }
